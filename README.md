@@ -50,7 +50,19 @@ waste_mitra/
 ```
 
 ---
+## 📸 Screenshots
 
+### 🏠 Home Page
+![Home Page](home.png)
+
+### 🔍 Analyze Waste
+![Analyze Page](analysis.png)
+
+### 📊 Results Page
+![Results Page](results.png)
+
+
+---
 ## ⚙️ Setup & Installation
 
 1. **Clone the Repo**  
