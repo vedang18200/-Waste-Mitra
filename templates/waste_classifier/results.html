@@ -1,0 +1,127 @@
+{% extends 'waste_classifier/base.html' %}
+
+{% block title %}Analysis Results - Waste Analysis System{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <h1 style="margin-bottom: 20px;">✅ Analysis Complete!</h1>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 30px;">
+            <div>
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">🗑️</div>
+                <h3>{{ classification.get_predicted_category_display }}</h3>
+                <p style="opacity: 0.9;">Waste Category</p>
+            </div>
+            <div>
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">📊</div>
+                <h3>{{ confidence_percentage }}%</h3>
+                <p style="opacity: 0.9;">Confidence Level</p>
+            </div>
+            <div>
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">📍</div>
+                <h3>{{ classification.get_state_display }}</h3>
+                <p style="opacity: 0.9;">Your State</p>
+            </div>
+        </div>
+    </div>
+
+    {% if classification.image %}
+    <div class="card" style="text-align: center;">
+        <h3 style="margin-bottom: 20px; color: #333;">📸 Analyzed Image</h3>
+        <img src="{{ classification.image.url }}" alt="Waste Image" style="max-width: 400px; max-height: 300px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+    </div>
+    {% endif %}
+
+    {% if classification.waste_description %}
+    <div class="card">
+        <h3 style="color: #333; margin-bottom: 15px;">📝 Description</h3>
+        <p style="color: #666; line-height: 1.7;">{{ classification.waste_description }}</p>
+    </div>
+    {% endif %}
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+        {% if classification.disposal_instructions %}
+        <div class="card" style="border-left: 4px solid #28a745;">
+            <h3 style="color: #28a745; margin-bottom: 15px;">🗑️ Disposal Instructions</h3>
+            <p style="color: #666; line-height: 1.7;">{{ classification.disposal_instructions|linebreaks }}</p>
+        </div>
+        {% endif %}
+
+        {% if classification.state_specific_laws %}
+        <div class="card" style="border-left: 4px solid #007bff;">
+            <h3 style="color: #007bff; margin-bottom: 15px;">⚖️ State-Specific Laws</h3>
+            <p style="color: #666; line-height: 1.7;">{{ classification.state_specific_laws|linebreaks }}</p>
+        </div>
+        {% endif %}
+
+        {% if classification.authorized_facilities %}
+        <div class="card" style="border-left: 4px solid #6f42c1;">
+            <h3 style="color: #6f42c1; margin-bottom: 15px;">🏢 Authorized Facilities</h3>
+            <p style="color: #666; line-height: 1.7;">{{ classification.authorized_facilities|linebreaks }}</p>
+        </div>
+        {% endif %}
+
+        {% if classification.health_hazards %}
+        <div class="card" style="border-left: 4px solid #dc3545;">
+            <h3 style="color: #dc3545; margin-bottom: 15px;">⚠️ Health Hazards</h3>
+            <p style="color: #666; line-height: 1.7;">{{ classification.health_hazards|linebreaks }}</p>
+        </div>
+        {% endif %}
+
+        {% if classification.environmental_risks %}
+        <div class="card" style="border-left: 4px solid #fd7e14;">
+            <h3 style="color: #fd7e14; margin-bottom: 15px;">🌍 Environmental Risks</h3>
+            <p style="color: #666; line-height: 1.7;">{{ classification.environmental_risks|linebreaks }}</p>
+        </div>
+        {% endif %}
+
+        {% if classification.precautions %}
+        <div class="card" style="border-left: 4px solid #ffc107;">
+            <h3 style="color: #e0a800; margin-bottom: 15px;">🛡️ Safety Precautions</h3>
+            <p style="color: #666; line-height: 1.7;">{{ classification.precautions|linebreaks }}</p>
+        </div>
+        {% endif %}
+
+        {% if classification.protective_equipment %}
+        <div class="card" style="border-left: 4px solid #20c997;">
+            <h3 style="color: #20c997; margin-bottom: 15px;">🥽 Protective Equipment</h3>
+            <p style="color: #666; line-height: 1.7;">{{ classification.protective_equipment|linebreaks }}</p>
+        </div>
+        {% endif %}
+
+        {% if classification.emergency_procedures %}
+        <div class="card" style="border-left: 4px solid #e83e8c;">
+            <h3 style="color: #e83e8c; margin-bottom: 15px;">🚨 Emergency Procedures</h3>
+            <p style="color: #666; line-height: 1.7;">{{ classification.emergency_procedures|linebreaks }}</p>
+        </div>
+        {% endif %}
+
+        {% if classification.recyclability_info %}
+        <div class="card" style="border-left: 4px solid #17a2b8;">
+            <h3 style="color: #17a2b8; margin-bottom: 15px;">♻️ Recyclability Information</h3>
+            <p style="color: #666; line-height: 1.7;">{{ classification.recyclability_info|linebreaks }}</p>
+        </div>
+        {% endif %}
+
+        {% if classification.cost_implications %}
+        <div class="card" style="border-left: 4px solid #6c757d;">
+            <h3 style="color: #6c757d; margin-bottom: 15px;">💰 Cost Implications</h3>
+            <p style="color: #666; line-height: 1.7;">{{ classification.cost_implications|linebreaks }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card" style="text-align: center; background: #f8f9fa;">
+        <h3 style="color: #333; margin-bottom: 20px;">What's Next?</h3>
+        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <a href="{% url 'analyze' %}" class="btn">📸 Analyze Another Item</a>
+            <a href="{% url 'history' %}" class="btn">📚 View History</a>
+            <a href="{% url 'home' %}" class="btn">🏠 Back to Home</a>
+        </div>
+    </div>
+
+    <div style="text-align: center; color: #888; margin-top: 20px;">
+        <p>Analysis completed on {{ classification.created_at|date:"F d, Y \a\\t g:i A" }}</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'waste_classifier/base.html' %}
+
+{% block title %}Home - Waste Analysis System{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 50px;">
+    <h1 style="font-size: 3rem; margin-bottom: 20px; color: #333;">
+        🌍 Smart Waste Management
+    </h1>
+    <p style="font-size: 1.3rem; color: #666; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        Upload a photo of your waste and get AI-powered classification with state-specific disposal guidelines for India.
+    </p>
+    <a href="{% url 'analyze' %}" class="btn btn-large">
+        📸 Analyze Waste Now
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 50px;">
+    <div class="card" style="text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 20px;">🔍</div>
+        <h3 style="margin-bottom: 15px; color: #333;">AI-Powered Recognition</h3>
+        <p style="color: #666;">Advanced computer vision technology identifies waste types with high accuracy using Google's Gemini AI.</p>
+    </div>
+
+    <div class="card" style="text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 20px;">📋</div>
+        <h3 style="margin-bottom: 15px; color: #333;">State-Specific Guidelines</h3>
+        <p style="color: #666;">Get disposal instructions tailored to your Indian state's regulations and available facilities.</p>
+    </div>
+
+    <div class="card" style="text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 20px;">⚡</div>
+        <h3 style="margin-bottom: 15px; color: #333;">Instant Results</h3>
+        <p style="color: #666;">Get comprehensive analysis including health risks, safety measures, and environmental impact within seconds.</p>
+    </div>
+</div>
+
+{% if recent_classifications %}
+<div class="card">
+    <h2 style="margin-bottom: 30px; color: #333;">📊 Recent Classifications</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        {% for classification in recent_classifications %}
+        <div style="border: 1px solid #e1e5e9; border-radius: 8px; padding: 20px; background: #f8f9fa;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-weight: 600; color: #333;">{{ classification.get_predicted_category_display }}</span>
+                <span style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">
+                    {{ classification.confidence_percentage }}%
+                </span>
+            </div>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">{{ classification.get_state_display }}</p>
+            <p style="color: #888; font-size: 0.8rem;">{{ classification.created_at|date:"M d, Y" }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{% url 'history' %}" class="btn">View All History</a>
+    </div>
+</div>
+{% endif %}
+
+<div class="card" style="text-align: center;">
+    <h2 style="margin-bottom: 20px; color: #333;">🎯 How It Works</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 30px;">
+        <div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: white; font-size: 1.5rem; font-weight: bold;">1</div>
+            <h4 style="margin-bottom: 10px;">Upload Image</h4>
+            <p style="color: #666; font-size: 0.9rem;">Take or upload a clear photo of your waste item</p>
+        </div>
+        <div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: white; font-size: 1.5rem; font-weight: bold;">2</div>
+            <h4 style="margin-bottom: 10px;">Select State</h4>
+            <p style="color: #666; font-size: 0.9rem;">Choose your Indian state for localized guidelines</p>
+        </div>
+        <div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: white; font-size: 1.5rem; font-weight: bold;">3</div>
+            <h4 style="margin-bottom: 10px;">Get Analysis</h4>
+            <p style="color: #666; font-size: 0.9rem;">Receive detailed disposal instructions and safety info</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

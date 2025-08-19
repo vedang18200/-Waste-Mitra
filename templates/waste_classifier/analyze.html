@@ -1,0 +1,107 @@
+{% extends 'waste_classifier/base.html' %}
+
+{% block title %}Analyze Waste - Waste Analysis System{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div class="card">
+        <h1 style="text-align: center; margin-bottom: 30px; color: #333;">
+            📸 Waste Analysis
+        </h1>
+        <p style="text-align: center; color: #666; margin-bottom: 40px; font-size: 1.1rem;">
+            Upload an image of your waste and select your state to get detailed disposal instructions
+        </p>
+
+        <form method="post" enctype="multipart/form-data" id="analyzeForm">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="image">📷 Upload Waste Image</label>
+                <input type="file"
+                       id="image"
+                       name="image"
+                       accept="image/*"
+                       required
+                       onchange="previewImage(this)"
+                       style="padding: 15px; border: 2px dashed #667eea; border-radius: 12px; background: #f8f9ff;">
+                <small style="color: #666; display: block; margin-top: 8px;">
+                    Accepted formats: JPG, PNG, WebP, BMP (Max size: 10MB)
+                </small>
+            </div>
+
+            <div id="imagePreview" class="image-preview" style="display: none;">
+                <!-- Image preview will appear here -->
+            </div>
+
+            <div class="form-group">
+                <label for="state">🏛️ Select Your State</label>
+                <select id="state" name="state" required style="padding: 15px;">
+                    <option value="">Choose your state...</option>
+                    {% for code, name in states %}
+                        <option value="{{ code }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+                <small style="color: #666; display: block; margin-top: 8px;">
+                    This helps us provide state-specific disposal guidelines
+                </small>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <button type="submit" class="btn btn-large" id="submitBtn">
+                    🔍 Analyze Waste
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card" style="background: #f8f9ff; border: 2px solid #e1e7ff;">
+        <h3 style="color: #333; margin-bottom: 20px;">💡 Tips for Better Results</h3>
+        <ul style="color: #666; line-height: 1.8;">
+            <li>📸 Take clear, well-lit photos of the waste item</li>
+            <li>🎯 Focus on the waste item, avoid cluttered backgrounds</li>
+            <li>📏 Capture the entire item or representative portion</li>
+            <li>🔄 Try different angles if the first analysis isn't accurate</li>
+            <li>🏷️ Include any visible labels or markings on the item</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3 style="color: #333; margin-bottom: 20px;">🗂️ Waste Categories We Can Identify</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">🏥</div>
+                <strong>Medical Waste</strong>
+            </div>
+            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">💻</div>
+                <strong>E-Waste</strong>
+            </div>
+            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">♻️</div>
+                <strong>Recyclable</strong>
+            </div>
+            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">🗑️</div>
+                <strong>General Waste</strong>
+            </div>
+            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">⚠️</div>
+                <strong>Hazardous</strong>
+            </div>
+            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">🌱</div>
+                <strong>Organic</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Show loading state when form is submitted
+document.getElementById('analyzeForm').addEventListener('submit', function() {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.innerHTML = '⏳ Analyzing...';
+    submitBtn.disabled = true;
+});
+</script>
+{% endblock %}

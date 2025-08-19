@@ -1,0 +1,66 @@
+{% extends 'waste_classifier/base.html' %}
+
+{% block title %}History - Waste Analysis System{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 style="text-align: center; margin-bottom: 30px; color: #333;">
+        📚 Analysis History
+    </h1>
+    <p style="text-align: center; color: #666; margin-bottom: 40px;">
+        View all your previous waste analyses and their results
+    </p>
+
+        {% if classifications %}
+        <div style="display: grid; gap: 20px;">
+            {% for classification in classifications %}
+            <div style="border: 1px solid #e1e5e9; border-radius: 12px; padding: 25px; background: white; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center;">
+                    {% if classification.image %}
+                    <div>
+                        <img src="{{ classification.image.url }}" alt="Waste" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                    </div>
+                    {% endif %}
+
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; color: #333;">{{ classification.get_predicted_category_display }}</h3>
+                        <p style="margin: 0 0 5px 0; color: #666;">
+                            <strong>State:</strong> {{ classification.get_state_display }}
+                        </p>
+                        <p style="margin: 0 0 5px 0; color: #666;">
+                            <strong>Confidence:</strong> {{ classification.confidence_percentage }}%
+                        </p>
+                        <p style="margin: 0; color: #888; font-size: 0.9rem;">
+                            {{ classification.created_at|date:"F d, Y \a\\t g:i A" }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <a href="{% url 'results' classification.id %}" class="btn" style="padding: 8px 20px;">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+
+                {% if classification.waste_description %}
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e1e5e9;">
+                    <p style="color: #666; font-style: italic;">{{ classification.waste_description|truncatewords:25 }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="{% url 'analyze' %}" class="btn btn-large">📸 Analyze New Waste</a>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 60px 20px; color: #666;">
+            <div style="font-size: 4rem; margin-bottom: 20px;">📭</div>
+            <h3 style="margin-bottom: 15px;">No analyses yet</h3>
+            <p style="margin-bottom: 30px;">Start analyzing waste to see your history here</p>
+            <a href="{% url 'analyze' %}" class="btn btn-large">📸 Analyze Your First Waste</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
