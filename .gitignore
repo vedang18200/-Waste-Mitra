@@ -1,1 +1,27 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+env/
+
+# SQLite database (local only)
+db.sqlite3
+
+# Media uploads (optional, if not needed in repo)
+media/
+
+# Environment variables
 .env
+
+# VS Code / PyCharm / IDE configs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Static files (collected)
+staticfiles/
