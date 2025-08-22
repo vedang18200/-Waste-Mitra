@@ -114,6 +114,9 @@
     <div class="card" style="text-align: center; background: #f8f9fa;">
         <h3 style="color: #333; margin-bottom: 20px;">What's Next?</h3>
         <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <a href="{% url 'download_report' classification.id %}" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); transform: scale(1.05); box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);">
+                📄 Download PDF Report
+            </a>
             <a href="{% url 'analyze' %}" class="btn">📸 Analyze Another Item</a>
             <a href="{% url 'history' %}" class="btn">📚 View History</a>
             <a href="{% url 'home' %}" class="btn">🏠 Back to Home</a>

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse, Http404, HttpResponse
 from django.views.generic import TemplateView, DetailView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,6 +14,7 @@ import logging
 from .models import WasteClassification
 from .serializers import WasteAnalysisInputSerializer, WasteClassificationSerializer
 from .gemini_service import GeminiWasteAnalyzer
+from .pdf_report import generate_waste_classification_pdf
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +77,7 @@ def parse_gemini_response(raw_response):
         logger.error(f"Complete raw response: {repr(raw_response)}")
         raise ValueError(f"No valid JSON found in response. All parsing methods failed.")
 
+
 class HomeView(TemplateView):
     template_name = 'waste_classifier/home.html'
 
@@ -112,6 +114,36 @@ class ClassificationDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['confidence_percentage'] = round(self.object.confidence_score * 100, 2) if self.object.confidence_score else 0
         return context
+
+
+class DownloadReportView(DetailView):
+    """View to download PDF report for waste classification"""
+    model = WasteClassification
+
+    def get(self, request, *args, **kwargs):
+        try:
+            classification = self.get_object()
+
+            # Generate PDF report
+            pdf_buffer = generate_waste_classification_pdf(classification)
+
+            # Create filename
+            filename = f"waste_analysis_report_{classification.id}_{classification.created_at.strftime('%Y%m%d')}.pdf"
+
+            # Create HTTP response
+            response = FileResponse(
+                pdf_buffer,
+                as_attachment=True,
+                filename=filename,
+                content_type='application/pdf'
+            )
+
+            return response
+
+        except Exception as e:
+            logger.error(f"PDF generation error: {e}")
+            messages.error(request, "Report could not be generated. Please try again.")
+            return redirect('results', pk=self.kwargs.get('pk'))
 
 
 class WasteAnalysisAPIView(APIView):
@@ -249,7 +281,8 @@ curl -X POST http://127.0.0.1:8000/api/analyze/ \\
                     'recyclability_info': waste_classification.recyclability_info,
                     'cost_implications': waste_classification.cost_implications,
                     'image_url': waste_classification.image.url,
-                    'created_at': waste_classification.created_at.isoformat()
+                    'created_at': waste_classification.created_at.isoformat(),
+                    'pdf_download_url': f'/download/{waste_classification.id}/'
                 }
             }
 
@@ -260,6 +293,32 @@ curl -X POST http://127.0.0.1:8000/api/analyze/ \\
             return Response({
                 'success': False,
                 'error': f'Analysis failed: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DownloadReportAPIView(APIView):
+    """API endpoint to download PDF report"""
+
+    def get(self, request, pk):
+        try:
+            classification = get_object_or_404(WasteClassification, pk=pk)
+
+            # Generate PDF report
+            pdf_buffer = generate_waste_classification_pdf(classification)
+
+            # Create filename
+            filename = f"waste_analysis_report_{classification.id}_{classification.created_at.strftime('%Y%m%d')}.pdf"
+
+            # Create HTTP response
+            response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+            return response
+
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': f'PDF generation failed: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

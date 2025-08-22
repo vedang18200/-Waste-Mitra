@@ -35,9 +35,12 @@
                         </p>
                     </div>
 
-                    <div>
-                        <a href="{% url 'results' classification.id %}" class="btn" style="padding: 8px 20px;">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <a href="{% url 'results' classification.id %}" class="btn" style="padding: 8px 20px; text-align: center;">
                             View Details
+                        </a>
+                        <a href="{% url 'download_report' classification.id %}" class="btn" style="padding: 8px 20px; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); font-size: 14px; text-align: center;">
+                            📄 Download PDF
                         </a>
                     </div>
                 </div>
